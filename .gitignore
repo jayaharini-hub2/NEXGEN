@@ -1,0 +1,40 @@
+
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Firebase credentials
+serviceAccountKey.json
+*-service-account.json
+firebase-adminsdk-*.json
+
+# Logs
+*.log
+npm-debug.log*
+firebase-debug.log*
+firestore-debug.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+
+# Test coverage
+coverage/
+
+# Build output
+dist/
+build/
