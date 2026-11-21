@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXGEN | Product Details</title>
+    <link rel="stylesheet" href="assets/css/product.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<header>
+    <h2>NEXGEN</h2>
+    <nav>
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+
+<main class="product-container" id="product">
+    <p id="message">Loading product...</p>
+</main>
+
+<script>
+const API_URL =
+    "https://firestore.googleapis.com/v1/projects/nexgen-9e4a9/databases/(default)/documents/products/";
+
+const productId = new URLSearchParams(window.location.search).get("id");
+
+async function loadProduct() {
+    const container = document.getElementById("product");
+    const message = document.getElementById("message");
+
+    if (!productId) {
+        message.textContent = "Product ID is missing.";
+        return;
+    }
+
+    try {
+        const response = await axios.get(API_URL + encodeURIComponent(productId));
+        const fields = response.data.fields;
+
+        if (fields.isActive?.booleanValue !== true) {
+            message.textContent = "This product is unavailable.";
+            return;
+        }
+
+        const name = fields.name?.stringValue || "Product";
+        const description = fields.description?.stringValue || "No description available.";
+        const price = Number(fields.price?.integerValue || fields.price?.doubleValue || 0);
+        const stock = Number(fields.stock?.integerValue || 0);
+        const imageUrl = fields.imageUrl?.stringValue || "";
+
+        container.innerHTML = "";
+
+        const image = document.createElement("img");
+        image.src = imageUrl || "https://placehold.co/400x400?text=NEXGEN";
+        image.alt = name;
+
+        const details = document.createElement("div");
+        details.className = "product-info";
+
+        const title = document.createElement("h1");
+        title.textContent = name;
+
+        const desc = document.createElement("p");
+        desc.textContent = description;
+
+        const priceElement = document.createElement("h2");
+        priceElement.textContent = `₹${price.toLocaleString("en-IN")}`;
+
+        const stockElement = document.createElement("p");
+        stockElement.textContent = stock > 0
+            ? `Available stock: ${stock}`
+            : "Out of stock";
+
+        details.append(title, desc, priceElement, stockElement);
+        container.append(image, details);
+
+    } catch (error) {
+        console.error("Product details error:", error.response?.data || error);
+        message.textContent = "Unable to load product details.";
+    }
+}
+
+loadProduct();
+</script>
+
+</body>
+</html>
