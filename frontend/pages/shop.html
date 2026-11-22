@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the NEXGEN collection of fashion, technology and lifestyle products.">
+
+    <title>Shop | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/shop.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    
+<header class="shop-header">
+    <a href="../index.html" class="shop-logo">NEXGEN<span>.</span></a>
+
+    <nav class="shop-nav">
+        <a href="../index.html">Home</a>
+        <a href="shop.html" class="active">Shop</a>
+        <a href="cart.html">Cart</a>
+        
+    </nav>
+
+</header>
+
+
+    <!-- SHOP -->
+    <main class="shop-container">
+
+        <section class="shop-heading">
+            <p class="shop-eyebrow">THE NEXGEN COLLECTION</p>
+            <h1>Explore our collection.</h1>
+            <p>Discover products selected for your everyday lifestyle.</p>
+        </section>
+
+        <p id="shop-message" class="shop-message">Loading products...</p>
+
+        <div id="category-sections"></div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="shop-footer">
+        <a href="../index.html" class="footer-logo">NEXGEN<span>.</span></a>
+        <p>Designed for your everyday.</p>
+        <small>© 2026 NEXGEN. All rights reserved.</small>
+    </footer>
+
+    <!-- ACCOUNT MENU -->
+    <script type="module" src="../assets/js/account-menu.js"></script>
+
+    <!-- SHOP PRODUCTS -->
+    <script type="module">
+
+        import {
+            db,
+            collection,
+            getDocs,
+            query,
+            where
+        } from "../assets/js/firebase-config.js";
+
+        const categoryContainer = document.getElementById("category-sections");
+        const message = document.getElementById("shop-message");
+
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[char]);
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 0
+            }).format(Number(price) || 0);
+        }
+
+        function renderProduct(product) {
+
+            const image = product.imageUrl ||
+                "https://placehold.co/600x500?text=NEXGEN";
+
+            const productLink =
+                `product.html?id=${encodeURIComponent(product.id)}`;
+
+            return `
+                <article class="shop-product-card">
+
+                    <a href="${productLink}" class="shop-product-link">
+
+                        <div class="shop-product-image">
+                            <img
+                                src="${escapeHTML(image)}"
+                                alt="${escapeHTML(product.name)}"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.src='https://placehold.co/600x500?text=NEXGEN';"
+                            >
+                        </div>
+
+                        <div class="shop-product-info">
+
+                            <p class="shop-product-brand">
+                                ${escapeHTML(product.brand || "NEXGEN")}
+                            </p>
+
+                            <h3>${escapeHTML(product.name)}</h3>
+
+                            <div class="shop-product-rating">
+                                <span class="rating-star">★</span>
+                                ${Number(product.rating || 0).toFixed(1)}
+                                <span class="rating-reviews">
+                                    (${Number(product.reviewCount || 0)})
+                                </span>
+                            </div>
+
+                            <p class="shop-product-price">
+                                ${formatPrice(product.price)}
+                            </p>
+
+                            <span class="shop-product-action">
+                                Explore Product <span>↗</span>
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </article>
+            `;
+        }
+
+        async function loadShop() {
+
+            message.textContent = "Loading products...";
+            categoryContainer.innerHTML = "";
+
+            try {
+
+                const categoryQuery = query(
+                    collection(db, "categories"),
+                    where("isActive", "==", true)
+                );
+
+                const productQuery = query(
+                    collection(db, "products"),
+                    where("isActive", "==", true)
+                );
+
+                const [categorySnapshot, productSnapshot] =
+                    await Promise.all([
+                        getDocs(categoryQuery),
+                        getDocs(productQuery)
+                    ]);
+
+                const categories = categorySnapshot.docs
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }))
+                    .sort((a, b) =>
+                        (a.displayOrder || 0) - (b.displayOrder || 0)
+                    );
+
+                const products = productSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                let html = "";
+                let displayedCount = 0;
+
+                categories.forEach(category => {
+
+                    const categoryProducts = products.filter(
+                        product => product.categoryId === category.id
+                    );
+
+                    if (!categoryProducts.length) return;
+
+                    displayedCount += categoryProducts.length;
+
+                    html += `
+                        <section class="shop-category">
+
+                            <div class="shop-category-heading">
+
+                                <div class="category-title">
+                                    <p class="shop-eyebrow">CURATED FOR YOU</p>
+                                    <h2>${escapeHTML(category.name)}</h2>
+                                    <p class="category-description">
+                                        ${escapeHTML(category.description || "")}
+                                    </p>
+                                </div>
+
+                                <span class="shop-product-count">
+                                    ${categoryProducts.length} items
+                                </span>
+
+                            </div>
+
+                            <div class="shop-product-grid">
+                                ${categoryProducts.map(renderProduct).join("")}
+                            </div>
+
+                        </section>
+                    `;
+                });
+
+                categoryContainer.innerHTML = html;
+
+                if (displayedCount === 0) {
+                    message.textContent = "No products are currently available.";
+                } else {
+                    message.textContent = `${displayedCount} products available`;
+                }
+
+            } catch (error) {
+
+                console.error("Shop loading error:", error);
+
+                message.textContent =
+                    "Unable to load products. Please try again later.";
+            }
+        }
+
+        loadShop();
+
+    </script>
+
+</body>
+</html>

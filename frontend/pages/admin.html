@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+
+    <script type="module" src="../assets/js/admin.js"></script>
+</head>
+
+<body>
+
+<header class="admin-header">
+    <a href="../index.html" class="admin-logo">NEXGEN<span>.</span></a>
+
+    <div class="admin-header-right">
+        <span class="admin-label">ADMIN PANEL</span>
+        <a href="../index.html">View Website ↗</a>
+        <button id="admin-logout" class="logout-button">Logout</button>
+    </div>
+</header>
+
+<main class="admin-container">
+
+    <section class="admin-heading">
+        <div>
+            <p class="admin-eyebrow">MANAGEMENT CENTER</p>
+            <h1>Dashboard<span>.</span></h1>
+            <p>Manage your NEXGEN store from one place.</p>
+        </div>
+    </section>
+
+    <p id="admin-message" class="admin-message">Loading dashboard...</p>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <span>Total Products</span>
+            <strong id="total-products">0</strong>
+            <small>Products in store</small>
+        </div>
+
+        <div class="stat-card">
+            <span>Total Orders</span>
+            <strong id="total-orders">0</strong>
+            <small>Customer orders</small>
+        </div>
+
+        <div class="stat-card">
+            <span>Total Customers</span>
+            <strong id="total-customers">0</strong>
+            <small>Registered customers</small>
+        </div>
+
+        <div class="stat-card">
+            <span>Total Sales</span>
+            <strong id="total-sales">₹0</strong>
+            <small>From placed orders</small>
+        </div>
+
+    </section>
+
+    <section class="admin-section">
+
+        <div class="section-heading">
+            <div>
+                <p class="admin-eyebrow">INVENTORY</p>
+                <h2>Product Management</h2>
+            </div>
+        </div>
+
+        <div class="admin-panel">
+
+            <h3 id="product-form-title">Add New Product</h3>
+
+            <form id="product-form">
+
+                <input type="hidden" id="product-id">
+
+                <div class="admin-form-grid">
+
+                    <div>
+                        <label for="product-name">Product Name</label>
+                        <input id="product-name" type="text" required>
+                    </div>
+
+                    <div>
+                        <label for="product-brand">Brand</label>
+                        <input id="product-brand" type="text">
+                    </div>
+
+                    <div>
+                        <label for="product-category">Category</label>
+                        <input id="product-category" type="text" required>
+                    </div>
+
+                    <div>
+                        <label for="product-price">Price (₹)</label>
+                        <input id="product-price" type="number" min="0" step="0.01" required>
+                    </div>
+
+                    <div>
+                        <label for="product-original-price">Original Price (₹)</label>
+                        <input id="product-original-price" type="number" min="0" step="0.01">
+                    </div>
+
+                    <div>
+                        <label for="product-stock">Stock</label>
+                        <input id="product-stock" type="number" min="0" step="1" required>
+                    </div>
+
+                    <div class="full-width">
+                        <label for="product-image">Image URL</label>
+                        <input id="product-image" type="url" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                </div>
+
+                <label class="active-checkbox">
+                    <input id="product-active" type="checkbox" checked>
+                    Product is active
+                </label>
+
+                <div class="form-actions">
+                    <button type="submit" id="save-product-button" class="primary-button">
+                        Add Product
+                    </button>
+
+                    <button type="button" id="cancel-edit-button" class="secondary-button" hidden>
+                        Cancel Edit
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="admin-panel table-panel">
+            <h3>All Products</h3>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="products-table">
+                        <tr>
+                            <td colspan="6">Loading products...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="admin-section">
+
+        <div class="section-heading">
+            <div>
+                <p class="admin-eyebrow">CUSTOMER ACTIVITY</p>
+                <h2>Order Management</h2>
+            </div>
+        </div>
+
+        <div class="admin-panel table-panel">
+
+            <div class="table-wrapper">
+                <table>
+                   <thead>
+    <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Date</th>
+        <th>Total</th>
+        <th>Payment Method</th>
+        <th>Order Status</th>
+        <th>Payment Status</th>
+        <th>Action</th>
+    </tr>
+</thead>
+
+                    <tbody id="orders-table">
+                        <tr>
+                            <td colspan="7">Loading orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="admin-footer">
+    <a href="../index.html">NEXGEN<span>.</span></a>
+    <p>Admin Management Dashboard</p>
+    <small>© 2026 NEXGEN. All rights reserved.</small>
+</footer>
+
+</body>
+</html>

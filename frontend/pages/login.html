@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to your NEXGEN customer account.">
+
+    <title>Login | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+<script type="module" src="../assets/js/account-menu.js"></script>
+</head>
+
+<body>
+
+    <header class="auth-header">
+        <a href="../index.html" class="auth-logo">NEXGEN<span>.</span></a>
+
+        <nav class="auth-nav" aria-label="Main navigation">
+            
+            <a href="../index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="cart.html">Cart</a>
+        </nav>
+    </header>
+
+    <main class="auth-page">
+
+        <section class="auth-card" aria-labelledby="login-title">
+
+            <div class="auth-heading">
+                <p class="auth-eyebrow">WELCOME BACK</p>
+                <h1 id="login-title">Sign in<span>.</span></h1>
+                <p>Log in to continue your NEXGEN shopping experience.</p>
+            </div>
+
+            <form id="login-form">
+
+                <div class="auth-field">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <label class="password-toggle">
+                    <input type="checkbox" id="show-password">
+                    Show password
+                </label>
+
+                <p id="login-message" class="auth-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" id="login-button" class="auth-submit">
+                    Sign In
+                </button>
+
+            </form>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="register.html">Create an account</a>
+            </p>
+
+            <a href="shop.html" class="auth-back-link">← Continue shopping</a>
+
+        </section>
+
+    </main>
+
+    <footer class="auth-footer">
+        <a href="../index.html" class="footer-logo">NEXGEN<span>.</span></a>
+        <p>Discover more. Live better. Shop NEXGEN.</p>
+        <p class="footer-copyright">© 2026 NEXGEN. All rights reserved.</p>
+    </footer>
+
+
+  
+<script type="module">
+    import { auth, db } from "../assets/js/firebase-config.js";
+    import { mergeGuestCart } from "../assets/js/cart-service.js";
+
+    import {
+        signInWithEmailAndPassword,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+    import {
+        doc,
+        getDoc
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+    // YOUR ADMIN UID
+    const ADMIN_UID = "9RyjGYS4Q5gRjuS0wX6H86LOy2m2";
+
+    const loginForm = document.getElementById("login-form");
+    const loginButton = document.getElementById("login-button");
+    const loginMessage = document.getElementById("login-message");
+    const passwordInput = document.getElementById("password");
+
+    // SHOW / HIDE PASSWORD
+    document.getElementById("show-password").addEventListener("change", event => {
+        passwordInput.type = event.target.checked ? "text" : "password";
+    });
+
+    // FIREBASE LOGIN
+    loginForm.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        loginMessage.textContent = "";
+        loginMessage.className = "auth-message";
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Signing in...";
+
+        const email = document.getElementById("email").value.trim();
+        const password = passwordInput.value;
+
+        try {
+            // AUTHENTICATE USER
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            const user = userCredential.user;
+            console.log("Logged-in email:", user.email);
+console.log("Logged-in UID:", user.uid);
+
+            // CHECK ADMIN ACCOUNT FIRST
+            if (user.uid === ADMIN_UID) {
+                loginMessage.textContent = "Admin login successful! Redirecting...";
+                loginMessage.classList.add("success");
+
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // CUSTOMER PROFILE VALIDATION
+            const customerReference = doc(db, "customers", user.uid);
+            const customerSnapshot = await getDoc(customerReference);
+
+            if (!customerSnapshot.exists()) {
+                await signOut(auth);
+
+                throw new Error(
+                    "Customer profile not found. Please contact support."
+                );
+            }
+
+            const customer = customerSnapshot.data();
+
+            if (
+                customer.role !== "customer" ||
+                customer.isActive !== true
+            ) {
+                await signOut(auth);
+
+                throw new Error(
+                    "This account is not an active customer account."
+                );
+            }
+
+            // MERGE GUEST CART FOR CUSTOMERS ONLY
+            await mergeGuestCart(user);
+
+            loginMessage.textContent = "Login successful! Redirecting...";
+            loginMessage.classList.add("success");
+
+            // CUSTOMER REDIRECTION
+            const requestedPage = new URLSearchParams(
+                window.location.search
+            ).get("redirect");
+
+            const allowedPages = [
+                "checkout.html",
+                "shop.html"
+            ];
+
+            window.location.href = allowedPages.includes(requestedPage)
+                ? requestedPage
+                : "shop.html";
+
+        } catch (error) {
+            console.error("Login error:", error);
+
+            const errorMessages = {
+                "auth/invalid-email": "Please enter a valid email address.",
+                "auth/invalid-credential": "Incorrect email or password.",
+                "auth/user-disabled": "This account has been disabled.",
+                "auth/too-many-requests": "Too many attempts. Please try again later.",
+                "auth/network-request-failed": "Network error. Check your internet connection."
+            };
+
+            loginMessage.textContent =
+                errorMessages[error.code] ||
+                error.message ||
+                "Unable to log in. Please try again.";
+
+            loginMessage.classList.add("error");
+
+            loginButton.disabled = false;
+            loginButton.textContent = "Sign In";
+        }
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,653 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Review your shopping cart and manage your NEXGEN purchases.">
+
+    <title>Shopping Cart | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/cart.css">
+
+    <script type="module" src="../assets/js/account-menu.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="cart-header">
+
+        <a href="../index.html" class="cart-logo">
+            NEXGEN<span>.</span>
+        </a>
+
+        <nav class="cart-nav" aria-label="Main navigation">
+
+            <div id="account-area"></div>
+
+            <a href="../index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="cart.html" aria-current="page">Cart</a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="cart-page">
+
+        <!-- CART HEADING -->
+
+        <section class="cart-heading">
+
+            <p class="cart-eyebrow">YOUR SHOPPING BAG</p>
+
+            <h1>Shopping Cart<span>.</span></h1>
+
+            <p>Review your items before placing your order.</p>
+
+        </section>
+
+
+        <!-- STATUS MESSAGE -->
+
+        <p id="cart-message" class="cart-message" role="status" aria-live="polite">
+            Loading your cart...
+        </p>
+
+
+        <!-- CART CONTENT -->
+
+        <section id="cart-content" class="cart-layout" hidden>
+
+            <div class="cart-items-section">
+
+                <div class="cart-items-heading">
+
+                    <h2>Your Items</h2>
+
+                    <span id="cart-item-count">0 items</span>
+
+                </div>
+
+                <div id="cart-items" class="cart-items"></div>
+
+                <a href="shop.html" class="continue-shopping">
+                    ← Continue Shopping
+                </a>
+
+            </div>
+
+
+            <!-- ORDER SUMMARY -->
+
+            <aside class="cart-summary">
+
+                <h2>Order Summary</h2>
+
+                <div class="summary-row">
+                    <span>Items</span>
+                    <span id="summary-item-count">0</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">₹0</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <span class="free-delivery">FREE</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="cart-total">₹0</span>
+                </div>
+
+                <button
+                    id="checkout-button"
+                    class="button"
+                    type="button"
+                >
+                    Proceed to Checkout
+                </button>
+
+                <p class="checkout-note">
+                    Secure shopping with NEXGEN.
+                </p>
+
+            </aside>
+
+        </section>
+
+
+        <!-- EMPTY CART -->
+
+        <section id="empty-cart" class="empty-cart" hidden>
+
+            <div class="empty-cart-icon" aria-hidden="true">
+                🛍️
+            </div>
+
+            <h2>Your cart is empty</h2>
+
+            <p>
+                Looks like you haven't added anything to your cart yet.
+            </p>
+
+            <a href="shop.html" class="shop-now-button">
+                Explore Products
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="cart-footer">
+
+        <a href="../index.html" class="footer-logo">
+            NEXGEN<span>.</span>
+        </a>
+
+        <p>Discover more. Live better. Shop NEXGEN.</p>
+
+        <p class="footer-copyright">
+            © 2026 NEXGEN. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- CART JAVASCRIPT -->
+
+    <script type="module">
+
+        import { auth } from "../assets/js/firebase-config.js";
+
+        import {
+            getCartItems,
+            updateCartQuantity,
+            removeCartItem
+        } from "../assets/js/cart-service.js";
+
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+
+        // =========================================
+        // ELEMENTS
+        // =========================================
+
+        const cartMessage = document.getElementById("cart-message");
+
+        const cartContent = document.getElementById("cart-content");
+
+        const emptyCart = document.getElementById("empty-cart");
+
+        const cartItemsContainer = document.getElementById("cart-items");
+
+        const itemCount = document.getElementById("cart-item-count");
+
+        const summaryItemCount = document.getElementById("summary-item-count");
+
+        const subtotalElement = document.getElementById("cart-subtotal");
+
+        const totalElement = document.getElementById("cart-total");
+
+        const checkoutButton = document.getElementById("checkout-button");
+
+
+        let currentUser = null;
+
+        let cartItems = [];
+
+        let actionInProgress = false;
+
+
+        // =========================================
+        // FORMAT PRICE
+        // =========================================
+
+        function formatPrice(price) {
+
+            return new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 0
+            }).format(Number(price) || 0);
+
+        }
+
+
+        // =========================================
+        // SHOW MESSAGE
+        // =========================================
+
+        function showMessage(message, type = "") {
+
+            cartMessage.textContent = message;
+
+            cartMessage.className = "cart-message";
+
+            if (type) {
+                cartMessage.classList.add(type);
+            }
+
+        }
+
+
+        // =========================================
+        // LOAD CART
+        // =========================================
+
+        async function loadCart() {
+
+            try {
+
+                showMessage("Loading your cart...");
+
+                cartContent.hidden = true;
+
+                emptyCart.hidden = true;
+
+                const items = await getCartItems();
+
+                cartItems = Array.isArray(items) ? items : [];
+
+                renderCart();
+
+            } catch (error) {
+
+                console.error("Cart loading error:", error);
+
+                showMessage(
+                    "Unable to load your cart. Please refresh and try again.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        // =========================================
+        // RENDER CART
+        // =========================================
+
+        function renderCart() {
+
+            cartItemsContainer.replaceChildren();
+
+            if (cartItems.length === 0) {
+
+                cartContent.hidden = true;
+
+                emptyCart.hidden = false;
+
+                showMessage("");
+
+                return;
+
+            }
+
+            cartContent.hidden = false;
+
+            emptyCart.hidden = true;
+
+            let subtotal = 0;
+
+            let totalQuantity = 0;
+
+
+            cartItems.forEach(item => {
+
+                const productId = item.productId || item.id;
+
+                const quantity = Number(item.quantity) || 1;
+
+                const price = Number(item.price) || 0;
+
+                const itemTotal = price * quantity;
+
+                subtotal += itemTotal;
+
+                totalQuantity += quantity;
+
+
+                // PRODUCT CARD
+
+                const card = document.createElement("article");
+
+                card.className = "cart-item";
+
+
+                // PRODUCT IMAGE
+
+                const imageWrapper = document.createElement("div");
+
+                imageWrapper.className = "cart-item-image";
+
+                const image = document.createElement("img");
+
+                image.src = item.imageUrl ||
+                    "https://placehold.co/200x200?text=NEXGEN";
+
+                image.alt = item.name || "NEXGEN product";
+
+                image.onerror = function () {
+
+                    this.onerror = null;
+
+                    this.src = "https://placehold.co/200x200?text=NEXGEN";
+
+                };
+
+                imageWrapper.appendChild(image);
+
+
+                // PRODUCT DETAILS
+
+                const details = document.createElement("div");
+
+                details.className = "cart-item-details";
+
+                const brand = document.createElement("p");
+
+                brand.className = "cart-item-brand";
+
+                brand.textContent = item.brand || "NEXGEN";
+
+                const name = document.createElement("h3");
+
+                name.textContent = item.name || "Unnamed product";
+
+                const priceElement = document.createElement("p");
+
+                priceElement.className = "cart-item-price";
+
+                priceElement.textContent = formatPrice(price);
+
+                details.append(brand, name, priceElement);
+
+
+                // QUANTITY CONTROLS
+
+                const controls = document.createElement("div");
+
+                controls.className = "cart-item-controls";
+
+                const quantityLabel = document.createElement("label");
+
+                quantityLabel.textContent = "Quantity";
+
+                const quantityControl = document.createElement("div");
+
+                quantityControl.className = "cart-quantity-control";
+
+
+                const decreaseButton = document.createElement("button");
+
+                decreaseButton.type = "button";
+
+                decreaseButton.textContent = "−";
+
+                decreaseButton.setAttribute(
+                    "aria-label",
+                    `Decrease quantity of ${item.name}`
+                );
+
+
+                const quantityValue = document.createElement("span");
+
+                quantityValue.textContent = quantity;
+
+
+                const increaseButton = document.createElement("button");
+
+                increaseButton.type = "button";
+
+                increaseButton.textContent = "+";
+
+                increaseButton.setAttribute(
+                    "aria-label",
+                    `Increase quantity of ${item.name}`
+                );
+
+
+                const stock = Number(item.stock);
+
+                const hasStockInformation =
+                    Number.isFinite(stock) && stock > 0;
+
+                decreaseButton.disabled = quantity <= 1;
+
+                increaseButton.disabled =
+                    quantity >= 99 ||
+                    (hasStockInformation && quantity >= stock);
+
+
+                decreaseButton.addEventListener("click", () => {
+
+                    changeQuantity(productId, quantity - 1);
+
+                });
+
+
+                increaseButton.addEventListener("click", () => {
+
+                    changeQuantity(productId, quantity + 1);
+
+                });
+
+
+                quantityControl.append(
+                    decreaseButton,
+                    quantityValue,
+                    increaseButton
+                );
+
+                controls.append(
+                    quantityLabel,
+                    quantityControl
+                );
+
+
+                // ITEM TOTAL AND REMOVE
+
+                const actions = document.createElement("div");
+
+                actions.className = "cart-item-actions";
+
+                const itemTotalElement = document.createElement("p");
+
+                itemTotalElement.className = "cart-item-total";
+
+                itemTotalElement.textContent = formatPrice(itemTotal);
+
+
+                const removeButton = document.createElement("button");
+
+                removeButton.type = "button";
+
+                removeButton.className = "remove-item-button";
+
+                removeButton.textContent = "Remove";
+
+                removeButton.addEventListener("click", () => {
+
+                    removeItem(productId);
+
+                });
+
+
+                actions.append(
+                    itemTotalElement,
+                    removeButton
+                );
+
+
+                card.append(
+                    imageWrapper,
+                    details,
+                    controls,
+                    actions
+                );
+
+                cartItemsContainer.appendChild(card);
+
+            });
+
+
+            // UPDATE ORDER SUMMARY
+
+            itemCount.textContent =
+                `${cartItems.length} ${cartItems.length === 1 ? "item" : "items"}`;
+
+            summaryItemCount.textContent = totalQuantity;
+
+            subtotalElement.textContent = formatPrice(subtotal);
+
+            totalElement.textContent = formatPrice(subtotal);
+
+            showMessage("");
+
+        }
+
+
+        // =========================================
+        // UPDATE QUANTITY
+        // =========================================
+
+        async function changeQuantity(productId, newQuantity) {
+
+            if (actionInProgress) return;
+
+            if (!productId || newQuantity < 1 || newQuantity > 99) {
+                return;
+            }
+
+            actionInProgress = true;
+
+            try {
+
+                await updateCartQuantity(productId, newQuantity);
+
+                await loadCart();
+
+            } catch (error) {
+
+                console.error("Quantity update error:", error);
+
+                showMessage(
+                    "Unable to update quantity. Please try again.",
+                    "error"
+                );
+
+            } finally {
+
+                actionInProgress = false;
+
+            }
+
+        }
+
+
+        // =========================================
+        // REMOVE ITEM
+        // =========================================
+
+        async function removeItem(productId) {
+
+            if (actionInProgress) return;
+
+            if (!productId) return;
+
+            actionInProgress = true;
+
+            try {
+
+                await removeCartItem(productId);
+
+                await loadCart();
+
+            } catch (error) {
+
+                console.error("Remove item error:", error);
+
+                showMessage(
+                    "Unable to remove this product. Please try again.",
+                    "error"
+                );
+
+            } finally {
+
+                actionInProgress = false;
+
+            }
+
+        }
+
+
+        // =========================================
+        // CHECKOUT
+        // =========================================
+
+        checkoutButton.addEventListener("click", () => {
+
+            if (cartItems.length === 0) {
+
+                showMessage("Your cart is empty.", "error");
+
+                return;
+
+            }
+
+            if (!currentUser) {
+
+                window.location.href =
+                    "login.html?redirect=checkout.html";
+
+                return;
+
+            }
+
+            window.location.href = "checkout.html";
+
+        });
+
+
+        // =========================================
+        // AUTHENTICATION
+        // =========================================
+
+        onAuthStateChanged(auth, async user => {
+
+            currentUser = user;
+
+            await loadCart();
+
+        });
+
+    </script>
+
+</body>
+</html>

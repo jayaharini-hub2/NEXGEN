@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXGEN Firebase Test</title>
+</head>
+<body>
+    <h1>NEXGEN Firebase Connection Test</h1>
+    <p id="status">Initializing Firebase...</p>
+
+    <script type="module">
+        import { auth, db } from "./assets/js/firebase-config.js";
+
+        const status = document.getElementById("status");
+
+        try {
+            console.log("Firebase Auth:", auth);
+            console.log("Firestore:", db);
+
+            status.textContent = "Firebase initialized successfully!";
+            status.style.color = "green";
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            status.textContent = "Firebase initialization failed.";
+            status.style.color = "red";
+        }
+    </script>
+</body>
+</html>
