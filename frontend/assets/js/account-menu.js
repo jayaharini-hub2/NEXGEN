@@ -12,12 +12,14 @@ import {
 
 const accountArea = document.getElementById("account-area");
 
-// Detect whether the current page is inside the pages folder
-const isInsidePages = window.location.pathname.includes("/pages/");
+// Detect GitHub Pages project path
+const basePath = window.location.pathname.startsWith("/NEXGEN/")
+    ? "/NEXGEN"
+    : "";
 
-// Set correct paths based on the current location
-const loginPath = "/pages/login.html";
-const ordersPath = isInsidePages ? "orders.html" : "pages/orders.html";
+// Page navigation paths
+const loginPath = `${basePath}/pages/login.html`;
+const ordersPath = `${basePath}/pages/orders.html`;
 
 if (accountArea) {
 
@@ -32,7 +34,7 @@ if (accountArea) {
 
             const loginLink = document.createElement("a");
 
-            loginLink.href = "/pages/login.html";
+            loginLink.href = loginPath;
             loginLink.className = "button account-login";
             loginLink.textContent = "Login";
 
@@ -115,8 +117,7 @@ if (accountArea) {
 
                 await signOut(auth);
 
-                window.location.href =  "/pages/login.html";
-
+                window.location.href = loginPath;
             } catch (error) {
 
                 console.error("Logout error:", error);
