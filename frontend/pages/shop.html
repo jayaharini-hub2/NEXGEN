@@ -4,8 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the NEXGEN collection of fashion, technology and lifestyle products.">
 
-    <title>Shop — NEXGEN</title>
+    <title>Shop | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/shop.css">
@@ -13,17 +19,22 @@
 
 <body>
 
-    <header class="shop-header">
-        <a href="../index.html" class="shop-logo">NEXGEN<span>.</span></a>
+    <!-- NAVBAR -->
+    
+<header class="shop-header">
+    <a href="../index.html" class="shop-logo">NEXGEN<span>.</span></a>
 
-        <nav>
-            <a href="../index.html">Home</a>
-            <a href="shop.html" class="active">Shop</a>
-            <a href="cart.html">Cart</a>
-            <a href="login.html">Login</a>
-        </nav>
-    </header>
+    <nav class="shop-nav">
+        <a href="../index.html">Home</a>
+        <a href="shop.html" class="active">Shop</a>
+        <a href="cart.html">Cart</a>
+        
+    </nav>
 
+</header>
+
+
+    <!-- SHOP -->
     <main class="shop-container">
 
         <section class="shop-heading">
@@ -32,16 +43,23 @@
             <p>Discover products selected for your everyday lifestyle.</p>
         </section>
 
-        <p id="shop-message">Loading products...</p>
+        <p id="shop-message" class="shop-message">Loading products...</p>
 
         <div id="category-sections"></div>
 
     </main>
 
+    <!-- FOOTER -->
     <footer class="shop-footer">
-        <p>© 2026 NEXGEN. All rights reserved.</p>
+        <a href="../index.html" class="footer-logo">NEXGEN<span>.</span></a>
+        <p>Designed for your everyday.</p>
+        <small>© 2026 NEXGEN. All rights reserved.</small>
     </footer>
 
+    <!-- ACCOUNT MENU -->
+    <script type="module" src="../assets/js/account-menu.js"></script>
+
+    <!-- SHOP PRODUCTS -->
     <script type="module">
 
         import {
@@ -52,11 +70,8 @@
             where
         } from "../assets/js/firebase-config.js";
 
-        const categoryContainer =
-            document.getElementById("category-sections");
-
-        const message =
-            document.getElementById("shop-message");
+        const categoryContainer = document.getElementById("category-sections");
+        const message = document.getElementById("shop-message");
 
         function escapeHTML(value) {
             return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -68,69 +83,72 @@
             })[char]);
         }
 
-        function getPrice(product) {
-            return Number(product.price || 0);
-        }
-
         function formatPrice(price) {
             return new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
                 maximumFractionDigits: 0
-            }).format(price);
+            }).format(Number(price) || 0);
         }
 
-        function renderProduct(product, productId) {
+        function renderProduct(product) {
 
             const image = product.imageUrl ||
-                "https://placehold.co/600x400?text=NEXGEN";
+                "https://placehold.co/600x500?text=NEXGEN";
+
+            const productLink =
+                `product.html?id=${encodeURIComponent(product.id)}`;
 
             return `
                 <article class="shop-product-card">
 
-                    <a href="product.html?id=${encodeURIComponent(productId)}"
-                       class="shop-product-image">
+                    <a href="${productLink}" class="shop-product-link">
 
-                        <img
-                            src="${escapeHTML(image)}"
-                            alt="${escapeHTML(product.name)}"
-                            loading="lazy"
-                            onerror="this.src='https://placehold.co/600x400?text=NEXGEN'"
-                        >
+                        <div class="shop-product-image">
+                            <img
+                                src="${escapeHTML(image)}"
+                                alt="${escapeHTML(product.name)}"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.src='https://placehold.co/600x500?text=NEXGEN';"
+                            >
+                        </div>
+
+                        <div class="shop-product-info">
+
+                            <p class="shop-product-brand">
+                                ${escapeHTML(product.brand || "NEXGEN")}
+                            </p>
+
+                            <h3>${escapeHTML(product.name)}</h3>
+
+                            <div class="shop-product-rating">
+                                <span class="rating-star">★</span>
+                                ${Number(product.rating || 0).toFixed(1)}
+                                <span class="rating-reviews">
+                                    (${Number(product.reviewCount || 0)})
+                                </span>
+                            </div>
+
+                            <p class="shop-product-price">
+                                ${formatPrice(product.price)}
+                            </p>
+
+                            <span class="shop-product-action">
+                                Explore Product <span>↗</span>
+                            </span>
+
+                        </div>
 
                     </a>
-
-                    <div class="shop-product-info">
-
-                        <p class="shop-product-brand">
-                            ${escapeHTML(product.brand || "NEXGEN")}
-                        </p>
-
-                        <h3>${escapeHTML(product.name)}</h3>
-
-                        <div class="shop-product-rating">
-                            ★ ${Number(product.rating || 0).toFixed(1)}
-                            <span>(${Number(product.reviewCount || 0)} reviews)</span>
-                        </div>
-
-                        <div class="shop-product-price">
-                            ${formatPrice(getPrice(product))}
-                        </div>
-
-                        <a
-                            class="shop-view-button"
-                            href="product.html?id=${encodeURIComponent(productId)}"
-                        >
-                            View Product
-                        </a>
-
-                    </div>
 
                 </article>
             `;
         }
 
         async function loadShop() {
+
+            message.textContent = "Loading products...";
+            categoryContainer.innerHTML = "";
 
             try {
 
@@ -164,16 +182,6 @@
                     ...doc.data()
                 }));
 
-                if (categories.length === 0) {
-                    message.textContent = "No active categories found.";
-                    return;
-                }
-
-                if (products.length === 0) {
-                    message.textContent = "No active products found.";
-                    return;
-                }
-
                 let html = "";
                 let displayedCount = 0;
 
@@ -183,9 +191,7 @@
                         product => product.categoryId === category.id
                     );
 
-                    if (categoryProducts.length === 0) {
-                        return;
-                    }
+                    if (!categoryProducts.length) return;
 
                     displayedCount += categoryProducts.length;
 
@@ -194,24 +200,22 @@
 
                             <div class="shop-category-heading">
 
-                                <div>
-                                    <p class="shop-eyebrow">EXPLORE CATEGORY</p>
+                                <div class="category-title">
+                                    <p class="shop-eyebrow">CURATED FOR YOU</p>
                                     <h2>${escapeHTML(category.name)}</h2>
-                                    <p>${escapeHTML(category.description || "")}</p>
+                                    <p class="category-description">
+                                        ${escapeHTML(category.description || "")}
+                                    </p>
                                 </div>
 
                                 <span class="shop-product-count">
-                                    ${categoryProducts.length} Products
+                                    ${categoryProducts.length} items
                                 </span>
 
                             </div>
 
                             <div class="shop-product-grid">
-
-                                ${categoryProducts.map(product =>
-                                    renderProduct(product, product.id)
-                                ).join("")}
-
+                                ${categoryProducts.map(renderProduct).join("")}
                             </div>
 
                         </section>
@@ -220,17 +224,18 @@
 
                 categoryContainer.innerHTML = html;
 
-                message.textContent = displayedCount
-                    ? `${displayedCount} products available`
-                    : "No products are currently available in these categories.";
+                if (displayedCount === 0) {
+                    message.textContent = "No products are currently available.";
+                } else {
+                    message.textContent = `${displayedCount} products available`;
+                }
 
             } catch (error) {
 
                 console.error("Shop loading error:", error);
 
                 message.textContent =
-                    "Unable to load products. Please check your Firebase connection and Firestore rules.";
-
+                    "Unable to load products. Please try again later.";
             }
         }
 

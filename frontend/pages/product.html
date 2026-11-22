@@ -1,92 +1,667 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXGEN | Product Details</title>
-    <link rel="stylesheet" href="assets/css/product.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <meta name="description" content="Explore product details and shop your favourites at NEXGEN.">
+
+    <title>Product Details | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/product.css">
+
+    <script type="module" src="../assets/js/account-menu.js"></script>
 </head>
+
 <body>
 
-<header>
-    <h2>NEXGEN</h2>
-    <nav>
-        <a href="shop.html">Shop</a>
-        <a href="cart.html">Cart</a>
-        <a href="login.html">Login</a>
-    </nav>
-</header>
+    <!-- HEADER -->
 
-<main class="product-container" id="product">
-    <p id="message">Loading product...</p>
-</main>
+    <header class="product-header">
 
-<script>
-const API_URL =
-    "https://firestore.googleapis.com/v1/projects/nexgen-9e4a9/databases/(default)/documents/products/";
+        <a href="../index.html" class="product-logo">
+            NEXGEN<span>.</span>
+        </a>
 
-const productId = new URLSearchParams(window.location.search).get("id");
+        <nav class="product-nav" aria-label="Main navigation">
+            <a href="../index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="cart.html">Cart</a>
+        </nav>
 
-async function loadProduct() {
-    const container = document.getElementById("product");
-    const message = document.getElementById("message");
+        <div id="account-area"></div>
 
-    if (!productId) {
-        message.textContent = "Product ID is missing.";
-        return;
-    }
+    </header>
 
-    try {
-        const response = await axios.get(API_URL + encodeURIComponent(productId));
-        const fields = response.data.fields;
 
-        if (fields.isActive?.booleanValue !== true) {
-            message.textContent = "This product is unavailable.";
-            return;
+    <!-- MAIN PRODUCT SECTION -->
+
+    <main class="product-page">
+
+        <!-- BREADCRUMB -->
+
+        <nav class="product-breadcrumb" aria-label="Breadcrumb">
+
+            <a href="../index.html">Home</a>
+
+            <span aria-hidden="true">/</span>
+
+            <a href="shop.html">Shop</a>
+
+            <span aria-hidden="true">/</span>
+
+            <span aria-current="page">Product Details</span>
+
+        </nav>
+
+
+        <!-- LOADING MESSAGE -->
+
+        <p id="product-message" class="product-message" role="status" aria-live="polite">
+            Loading product details...
+        </p>
+
+
+        <!-- PRODUCT CONTENT -->
+
+        <section id="product-content" class="product-layout" hidden>
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <div class="product-image-section">
+
+                <div class="product-image-wrapper">
+
+                    <img
+                        id="product-image"
+                        src=""
+                        alt=""
+                        class="product-main-image"
+                    >
+
+                    <span
+                        id="product-discount-badge"
+                        class="product-discount-badge"
+                        hidden
+                    ></span>
+
+                </div>
+
+                <p class="product-image-caption">
+                    YOUR NEXT FAVOURITE STARTS HERE.
+                </p>
+
+            </div>
+
+
+            <!-- PRODUCT INFORMATION -->
+
+            <div class="product-information">
+
+                <p id="product-brand" class="product-brand"></p>
+
+                <h1 id="product-name" class="product-name"></h1>
+
+
+                <!-- RATING -->
+
+                <div class="product-rating">
+
+                    <span id="product-rating" class="rating-stars"></span>
+
+                    <span id="product-reviews" class="review-count"></span>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <p id="product-description" class="product-description"></p>
+
+
+                <!-- PRICE -->
+
+                <div class="product-price-section">
+
+                    <span id="product-price" class="product-current-price"></span>
+
+                    <span
+                        id="product-original-price"
+                        class="product-original-price"
+                        hidden
+                    ></span>
+
+                    <span
+                        id="product-savings"
+                        class="product-savings"
+                        hidden
+                    ></span>
+
+                </div>
+
+
+                <!-- STOCK -->
+
+                <div class="product-stock-section">
+
+                    <span id="stock-indicator" class="stock-indicator"></span>
+
+                    <span id="product-stock" class="product-stock"></span>
+
+                </div>
+
+
+                <div class="product-divider"></div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="quantity-section">
+
+                    <label for="product-quantity">Quantity</label>
+
+                    <div class="quantity-control">
+
+                        <button
+                            type="button"
+                            id="decrease-quantity"
+                            class="quantity-button"
+                            aria-label="Decrease quantity"
+                        >
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            id="product-quantity"
+                            value="1"
+                            min="1"
+                            max="99"
+                            inputmode="numeric"
+                            aria-label="Product quantity"
+                        >
+
+                        <button
+                            type="button"
+                            id="increase-quantity"
+                            class="quantity-button"
+                            aria-label="Increase quantity"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADD TO CART -->
+
+                <button
+                    type="button"
+                    id="add-to-cart"
+                    class="add-to-cart-button"
+                >
+                    Add to Cart
+                </button>
+
+                <p id="cart-message" class="cart-message" role="status" aria-live="polite"></p>
+
+
+                <!-- PRODUCT FEATURES -->
+
+                <div class="product-benefits">
+
+                    <div class="product-benefit">
+                        <span aria-hidden="true">✓</span>
+                        Quality products
+                    </div>
+
+                    <div class="product-benefit">
+                        <span aria-hidden="true">✓</span>
+                        Secure shopping
+                    </div>
+
+                    <div class="product-benefit">
+                        <span aria-hidden="true">✓</span>
+                        Easy ordering
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCT SKU -->
+
+                <p class="product-sku">
+                    Product SKU:
+                    <span id="product-sku"></span>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="product-footer">
+
+        <a href="../index.html" class="footer-logo">
+            NEXGEN<span>.</span>
+        </a>
+
+        <p>Discover more. Live better. Shop NEXGEN.</p>
+
+        <p class="footer-copyright">
+            © 2026 NEXGEN. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- PRODUCT AND CART LOGIC -->
+
+    <script type="module">
+
+        import { addProductToCart }
+            from "../assets/js/cart-service.js";
+
+        import { db, doc }
+            from "../assets/js/firebase-config.js";
+
+        import { getDoc }
+            from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+
+        // ELEMENTS
+
+        const message = document.getElementById("product-message");
+        const content = document.getElementById("product-content");
+
+        const productImage = document.getElementById("product-image");
+        const productName = document.getElementById("product-name");
+        const productBrand = document.getElementById("product-brand");
+        const productDescription = document.getElementById("product-description");
+
+        const productPrice = document.getElementById("product-price");
+        const originalPrice = document.getElementById("product-original-price");
+        const savings = document.getElementById("product-savings");
+        const discountBadge = document.getElementById("product-discount-badge");
+
+        const rating = document.getElementById("product-rating");
+        const reviews = document.getElementById("product-reviews");
+
+        const stockIndicator = document.getElementById("stock-indicator");
+        const stockText = document.getElementById("product-stock");
+
+        const quantityInput = document.getElementById("product-quantity");
+
+        const decreaseButton = document.getElementById("decrease-quantity");
+        const increaseButton = document.getElementById("increase-quantity");
+
+        const addToCartButton = document.getElementById("add-to-cart");
+        const cartMessage = document.getElementById("cart-message");
+
+
+        // PRODUCT ID
+
+        const parameters = new URLSearchParams(window.location.search);
+        const productId = parameters.get("id");
+
+        let currentProduct = null;
+
+
+        // FORMAT PRICE
+
+        function formatPrice(price) {
+
+            return new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 0
+            }).format(price);
+
         }
 
-        const name = fields.name?.stringValue || "Product";
-        const description = fields.description?.stringValue || "No description available.";
-        const price = Number(fields.price?.integerValue || fields.price?.doubleValue || 0);
-        const stock = Number(fields.stock?.integerValue || 0);
-        const imageUrl = fields.imageUrl?.stringValue || "";
 
-        container.innerHTML = "";
+        // LOAD PRODUCT
 
-        const image = document.createElement("img");
-        image.src = imageUrl || "https://placehold.co/400x400?text=NEXGEN";
-        image.alt = name;
+        async function loadProduct() {
 
-        const details = document.createElement("div");
-        details.className = "product-info";
+            if (!productId) {
 
-        const title = document.createElement("h1");
-        title.textContent = name;
+                message.textContent = "Product ID is missing.";
+                addToCartButton.disabled = true;
 
-        const desc = document.createElement("p");
-        desc.textContent = description;
+                return;
 
-        const priceElement = document.createElement("h2");
-        priceElement.textContent = `₹${price.toLocaleString("en-IN")}`;
+            }
 
-        const stockElement = document.createElement("p");
-        stockElement.textContent = stock > 0
-            ? `Available stock: ${stock}`
-            : "Out of stock";
+            try {
 
-        details.append(title, desc, priceElement, stockElement);
-        container.append(image, details);
+                const productReference = doc(db, "products", productId);
+                const productSnapshot = await getDoc(productReference);
 
-    } catch (error) {
-        console.error("Product details error:", error.response?.data || error);
-        message.textContent = "Unable to load product details.";
-    }
-}
+                if (!productSnapshot.exists()) {
 
-loadProduct();
-</script>
+                    message.textContent = "Sorry, this product could not be found.";
+                    addToCartButton.disabled = true;
+
+                    return;
+
+                }
+
+                const product = productSnapshot.data();
+
+                if (product.isActive !== true) {
+
+                    message.textContent = "This product is currently unavailable.";
+                    addToCartButton.disabled = true;
+
+                    return;
+
+                }
+
+                currentProduct = product;
+
+                displayProduct(product);
+
+                message.textContent = "";
+                content.hidden = false;
+
+            } catch (error) {
+
+                console.error("Product loading error:", error);
+
+                message.textContent =
+                    "Unable to load product details. Please try again.";
+
+                addToCartButton.disabled = true;
+
+            }
+
+        }
+
+
+        // DISPLAY PRODUCT
+
+        function displayProduct(product) {
+
+            document.title = `${product.name || "Product"} | NEXGEN`;
+
+
+            // IMAGE
+
+            productImage.src = product.imageUrl ||
+                "https://placehold.co/600x600?text=NEXGEN";
+
+            productImage.alt = product.name || "Product image";
+
+            productImage.onerror = function () {
+
+                this.onerror = null;
+                this.src = "https://placehold.co/600x600?text=NEXGEN";
+
+            };
+
+
+            // BASIC INFORMATION
+
+            productName.textContent = product.name || "Product";
+
+            productBrand.textContent = product.brand || "NEXGEN";
+
+            productDescription.textContent =
+                product.description || "Discover this product at NEXGEN.";
+
+
+            // PRICE
+
+            const price = Number(product.price || 0);
+            const oldPrice = Number(product.originalPrice || product.price || 0);
+
+            productPrice.textContent = formatPrice(price);
+
+            if (oldPrice > price) {
+
+                originalPrice.textContent = formatPrice(oldPrice);
+                originalPrice.hidden = false;
+
+                const discount = Math.round(
+                    ((oldPrice - price) / oldPrice) * 100
+                );
+
+                savings.textContent = `${discount}% OFF`;
+                savings.hidden = false;
+
+                discountBadge.textContent = `${discount}% OFF`;
+                discountBadge.hidden = false;
+
+            } else {
+
+                originalPrice.textContent = "";
+                originalPrice.hidden = true;
+
+                savings.textContent = "";
+                savings.hidden = true;
+
+                discountBadge.textContent = "";
+                discountBadge.hidden = true;
+
+            }
+
+
+            // RATING
+
+            const productRating = Number(product.rating || 0);
+
+            rating.textContent = `★ ${productRating.toFixed(1)}`;
+
+            reviews.textContent =
+                `(${Number(product.reviewCount || 0)} reviews)`;
+
+
+            // STOCK
+
+            const stock = Math.max(0, Number(product.stock || 0));
+
+            stockText.textContent = stock > 0
+                ? `${stock} available`
+                : "Out of stock";
+
+            stockIndicator.className = stock > 0
+                ? "stock-indicator in-stock"
+                : "stock-indicator out-of-stock";
+
+            stockIndicator.textContent = "●";
+
+
+            // QUANTITY LIMIT
+
+            const maximum = Math.min(stock, 99);
+
+            quantityInput.min = 1;
+            quantityInput.max = maximum;
+            quantityInput.value = stock > 0 ? 1 : 0;
+
+            if (stock <= 0) {
+
+                addToCartButton.disabled = true;
+                addToCartButton.textContent = "Out of Stock";
+
+                quantityInput.disabled = true;
+                increaseButton.disabled = true;
+                decreaseButton.disabled = true;
+
+            }
+
+
+            // SKU
+
+            document.getElementById("product-sku").textContent =
+                product.sku || productId || "N/A";
+
+        }
+
+
+        // DECREASE QUANTITY
+
+        decreaseButton.addEventListener("click", () => {
+
+            const current = Number(quantityInput.value) || 1;
+
+            quantityInput.value = Math.max(1, current - 1);
+
+        });
+
+
+        // INCREASE QUANTITY
+
+        increaseButton.addEventListener("click", () => {
+
+            if (!currentProduct) return;
+
+            const current = Number(quantityInput.value) || 1;
+            const maximum = Math.min(Number(currentProduct.stock || 0), 99);
+
+            quantityInput.value = Math.min(maximum, current + 1);
+
+        });
+
+
+        // VALIDATE QUANTITY
+
+        quantityInput.addEventListener("change", () => {
+
+            if (!currentProduct) return;
+
+            const maximum = Math.min(Number(currentProduct.stock || 0), 99);
+            const quantity = Number(quantityInput.value);
+
+            if (!Number.isInteger(quantity)) {
+
+                quantityInput.value = 1;
+                return;
+
+            }
+
+            quantityInput.value = Math.max(
+                1,
+                Math.min(maximum, quantity)
+            );
+
+        });
+
+
+        // ADD TO CART
+
+        async function addToCart() {
+
+            if (!currentProduct) return;
+
+            cartMessage.textContent = "";
+            cartMessage.className = "cart-message";
+
+            addToCartButton.disabled = true;
+            addToCartButton.textContent = "Adding...";
+
+            try {
+
+                const quantity = Number(quantityInput.value);
+                const stock = Number(currentProduct.stock || 0);
+
+                if (
+                    !Number.isInteger(quantity) ||
+                    quantity < 1 ||
+                    quantity > 99 ||
+                    quantity > stock
+                ) {
+
+                    throw new Error("Please select a valid available quantity.");
+
+                }
+
+
+                // PRODUCT DATA FOR CART SERVICE
+
+                const cartProduct = {
+
+                    id: productId,
+                    name: currentProduct.name || "",
+                    brand: currentProduct.brand || "",
+                    price: Number(currentProduct.price || 0),
+                    originalPrice: Number(
+                        currentProduct.originalPrice ||
+                        currentProduct.price ||
+        0
+                    ),
+                    imageUrl: currentProduct.imageUrl || ""
+
+                };
+
+
+                // ADD PRODUCT
+
+                await addProductToCart(cartProduct, quantity);
+
+
+                // SUCCESS
+
+                cartMessage.textContent =
+                    "Product successfully added to your cart!";
+
+                cartMessage.className = "cart-message success";
+
+                addToCartButton.textContent = "Added to Cart";
+
+
+                // RESET BUTTON
+
+                setTimeout(() => {
+
+                    addToCartButton.textContent = "Add to Cart";
+                    addToCartButton.disabled = false;
+
+                }, 1500);
+
+
+            } catch (error) {
+
+                console.error("Add to cart error:", error);
+
+                cartMessage.textContent = error.message ||
+                    "Unable to add this product to your cart.";
+
+                cartMessage.className = "cart-message error";
+
+                addToCartButton.textContent = "Add to Cart";
+                addToCartButton.disabled = false;
+
+            }
+
+        }
+
+
+        addToCartButton.addEventListener("click", addToCart);
+
+
+        // INITIALIZE
+
+        loadProduct();
+
+    </script>
 
 </body>
 </html>

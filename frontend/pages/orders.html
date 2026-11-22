@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="View and track your NEXGEN orders.">
+
+    <title>My Orders | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/orders.css">
+
+    <script type="module" src="../assets/js/account-menu.js"></script>
+    <script type="module" src="../assets/js/orders.js"></script>
+</head>
+
+<body>
+
+<header class="orders-header">
+    <a href="../index.html" class="orders-logo">
+        NEXGEN<span>.</span>
+    </a>
+
+    <nav class="orders-nav">
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+        <div id="account-area"></div>
+    </nav>
+</header>
+
+<main class="orders-container">
+
+    <section class="orders-heading">
+        <p class="orders-eyebrow">YOUR PURCHASES</p>
+
+        <h1>My Orders<span>.</span></h1>
+
+        <p>Track your purchases and view your order history.</p>
+    </section>
+
+    <div id="orders-message" class="orders-message">
+        Loading your orders...
+    </div>
+
+    <section id="orders-list" class="orders-list"></section>
+
+    <section id="empty-orders" class="empty-orders" hidden>
+        <div class="empty-orders-icon">📦</div>
+
+        <h2>No orders yet</h2>
+
+        <p>You haven't placed any orders with NEXGEN yet.</p>
+
+        <a href="shop.html" class="continue-shopping">
+            Start Shopping →
+        </a>
+    </section>
+
+</main>
+
+<footer class="orders-footer">
+    <a href="../index.html" class="footer-logo">
+        NEXGEN<span>.</span>
+    </a>
+
+    <p>Discover more. Live better. Shop NEXGEN.</p>
+
+    <small>© 2026 NEXGEN. All rights reserved.</small>
+</footer>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/style.css">
-   
+   <script type="module" src="assets/js/account-menu.js"></script>
 </head>
 
 <body>
@@ -34,16 +34,14 @@
             </a>
 
             <nav class="nav-links">
+                <div id="account-area"></div>
                 <a href="index.html" class="active">Home</a>
                 <a href="pages/shop.html">Discover</a>
                 <a href="#categories">Categories</a>
-                <a href="#featured">Trending</a>
             </nav>
 
             <div class="nav-actions">
-                <a href="pages/login.html" class="nav-icon" aria-label="Account">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-                </a>
+                
 
                 <a href="pages/cart.html" class="nav-icon cart-icon" aria-label="Shopping cart">
                     <svg viewBox="0 0 24 24"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
@@ -224,123 +222,7 @@
             </div>
         </section>
 
-        <!-- FEATURED PRODUCTS -->
-        <section class="section featured-section" id="featured">
-            <div class="container">
-
-                <div class="section-heading">
-                    <div>
-                        <div class="eyebrow dark-eyebrow">THE GOOD STUFF</div>
-                        <h2>Trending <span>right now.</span></h2>
-                        <p>Things you'll love. Finds you'll keep.</p>
-                    </div>
-
-                    <a href="pages/shop.html" class="section-link">
-                        View all products ↗
-                    </a>
-                </div>
-
-                <div class="product-grid">
-
-                    <article class="product-card">
-                        <div class="product-image-wrap">
-                            <span class="product-badge">BESTSELLER</span>
-
-                            <img
-                                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=85"
-                                alt="Red premium sports shoes"
-                            >
-
-                            <a href="pages/product.html" class="quick-view">
-                                Quick view ↗
-                            </a>
-                        </div>
-
-                        <div class="product-details">
-                            <div class="product-category">FOOTWEAR</div>
-                            <h3>Velocity Street Sneakers</h3>
-                            <div class="product-bottom">
-                                <strong>₹2,499</strong>
-                                <span>★★★★★ <small>(48)</small></span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="product-card">
-                        <div class="product-image-wrap">
-                            <span class="product-badge badge-new">JUST DROPPED</span>
-
-                            <img
-                                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=85"
-                                alt="Minimal wrist watch"
-                            >
-
-                            <a href="pages/product.html" class="quick-view">
-                                Quick view ↗
-                            </a>
-                        </div>
-
-                        <div class="product-details">
-                            <div class="product-category">ACCESSORIES</div>
-                            <h3>Minimalist Classic Watch</h3>
-                            <div class="product-bottom">
-                                <strong>₹1,899</strong>
-                                <span>★★★★★ <small>(32)</small></span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="product-card">
-                        <div class="product-image-wrap">
-                            <span class="product-badge badge-sale">−20% OFF</span>
-
-                            <img
-                                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&q=85"
-                                alt="Premium wireless headphones"
-                            >
-
-                            <a href="pages/product.html" class="quick-view">
-                                Quick view ↗
-                            </a>
-                        </div>
-
-                        <div class="product-details">
-                            <div class="product-category">ELECTRONICS</div>
-                            <h3>Studio Wireless Headphones</h3>
-                            <div class="product-bottom">
-                                <strong>₹3,299</strong>
-                                <span>★★★★★ <small>(76)</small></span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="product-card">
-                        <div class="product-image-wrap">
-                            <span class="product-badge">TRENDING</span>
-
-                            <img
-                                src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=700&q=85"
-                                alt="Modern smartwatch"
-                            >
-
-                            <a href="pages/product.html" class="quick-view">
-                                Quick view ↗
-                            </a>
-                        </div>
-
-                        <div class="product-details">
-                            <div class="product-category">TECH & GADGETS</div>
-                            <h3>Pulse Smart Watch</h3>
-                            <div class="product-bottom">
-                                <strong>₹4,499</strong>
-                                <span>★★★★★ <small>(54)</small></span>
-                            </div>
-                        </div>
-                    </article>
-
-                </div>
-            </div>
-        </section>
+       
 
         <!-- PROMOTIONAL BANNER -->
         <section class="promo-section">

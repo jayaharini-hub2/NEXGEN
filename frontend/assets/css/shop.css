@@ -3,42 +3,136 @@
    NEXGEN SHOP PAGE
 ===================================== */
 
+
+/* NAVBAR */
+
 .shop-header {
-    display: flex;
-    justify-content: space-between;
+    width: 100%;
+    min-height: 82px;
+    padding: 0 6%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
-    padding: 22px 6%;
     background: #172554;
-    border-bottom: 1px solid #ffffff20;
+    border-bottom: 1px solid #ffffff15;
 }
 
 .shop-logo {
-    font-size: 27px;
-    font-weight: 800;
-    color: #ffffff;
+    justify-self: start;
     text-decoration: none;
+    color: #ffffff;
+    font-family: "Manrope", sans-serif;
+    font-size: 28px;
+    font-weight: 800;
 }
 
 .shop-logo span {
     color: #d9ff70;
 }
 
-.shop-header nav {
+.shop-nav {
     display: flex;
-    gap: 28px;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
 }
 
-.shop-header nav a {
-    text-decoration: none;
+.shop-nav a {
     color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
     font-weight: 600;
-    transition: color 0.2s;
+    white-space: nowrap;
+    transition: color 0.2s ease;
 }
 
-.shop-header nav a.active,
-.shop-header nav a:hover {
+.shop-nav a:hover,
+.shop-nav a.active {
     color: #d9ff70;
 }
+
+.shop-header-account {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+}
+
+/* PROFILE / LOGIN */
+
+
+.account-menu {
+    position: relative;
+}
+
+.account-login,
+.account-profile-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    background: #d9ff70;
+    color: #172554 !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 230px;
+    padding: 18px;
+    background: white;
+    color: #172554;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px #0002;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+}
+
+.account-dropdown[hidden] {
+    display: none !important;
+}
+
+/* MOBILE NAVBAR */
+
+@media (max-width: 700px) {
+    .shop-header {
+        grid-template-columns: 1fr auto;
+        gap: 15px;
+        padding: 16px 5%;
+    }
+
+    .shop-logo {
+        font-size: 24px;
+    }
+
+    .shop-nav {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        gap: 25px;
+        padding-bottom: 5px;
+    }
+
+    .shop-header-account {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
+
+@media (max-width: 400px) {
+    .shop-nav {
+        gap: 17px;
+    }
+
+    .shop-nav a {
+        font-size: 13px;
+    }
+}
+
 
 /* =====================================
    SHOP MAIN SECTION
