@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/checkout.css">
+
+    <script type="module" src="../assets/js/account-menu.js"></script>
+    <script type="module" src="../assets/js/checkout.js"></script>
+</head>
+
+<body>
+
+<header class="checkout-header">
+    <a href="../index.html" class="checkout-logo">
+        NEXGEN<span>.</span>
+    </a>
+
+    <nav class="checkout-nav">
+        <div id="account-area"></div>
+        <a href="shop.html">Shop</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+</header>
+
+<main class="checkout-container">
+
+    <section class="checkout-heading">
+        <p class="checkout-eyebrow">ALMOST YOURS</p>
+        <h1>Secure Checkout<span>.</span></h1>
+        <p>Complete your delivery details and place your order.</p>
+    </section>
+
+    <p id="checkout-message" class="checkout-message">
+        Loading checkout...
+    </p>
+
+    <section id="checkout-content" class="checkout-layout" hidden>
+
+        <div class="checkout-form-section">
+
+            <h2>Delivery Information</h2>
+
+            <form id="checkout-form">
+
+                <label for="customer-name">Full Name</label>
+                <input type="text" id="customer-name" required>
+
+                <label for="customer-email">Email Address</label>
+                <input type="email" id="customer-email" required>
+
+                <label for="customer-phone">Phone Number</label>
+                <input type="tel" id="customer-phone"
+                       placeholder="Enter your phone number"
+                       required>
+
+                <label for="customer-address">Delivery Address</label>
+                <textarea id="customer-address"
+                          rows="4"
+                          placeholder="House number, street, area"
+                          required></textarea>
+
+                <div class="checkout-two-columns">
+
+                    <div>
+                        <label for="customer-city">City</label>
+                        <input type="text" id="customer-city" required>
+                    </div>
+
+                    <div>
+                        <label for="customer-state">State</label>
+                        <input type="text" id="customer-state" required>
+                    </div>
+
+                </div>
+
+                <label for="customer-pincode">PIN Code</label>
+                <input type="text"
+                       id="customer-pincode"
+                       maxlength="6"
+                       pattern="[0-9]{6}"
+                       required>
+
+                <h2 class="payment-heading">Payment Method</h2>
+
+                <div class="payment-option">
+                    <input type="radio"
+                           id="cod"
+                           name="payment"
+                           value="Cash on Delivery"
+                           checked>
+
+                    <label for="cod">
+                        Cash on Delivery
+                    </label>
+                </div>
+
+                <button type="submit"
+                        id="place-order-button"
+                        class="place-order-button">
+                    Place Order →
+                </button>
+
+            </form>
+
+        </div>
+
+        <aside class="checkout-summary">
+
+            <h2>Order Summary</h2>
+
+            <div id="checkout-items"></div>
+
+            <div class="checkout-summary-row">
+                <span>Subtotal</span>
+                <strong id="checkout-subtotal">₹0</strong>
+            </div>
+
+            <div class="checkout-summary-row">
+                <span>Delivery</span>
+                <strong>FREE</strong>
+            </div>
+
+            <div class="checkout-total">
+                <span>Total</span>
+                <strong id="checkout-total">₹0</strong>
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+<footer class="checkout-footer">
+    <a href="../index.html" class="footer-logo">
+        NEXGEN<span>.</span>
+    </a>
+    <p>Discover more. Live better. Shop NEXGEN.</p>
+    <small>© 2026 NEXGEN. All rights reserved.</small>
+</footer>
+
+</body>
+</html>

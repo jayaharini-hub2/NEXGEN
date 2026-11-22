@@ -1,0 +1,390 @@
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 6%;
+    background: #172554;
+}
+
+.admin-logo {
+    color: white;
+    text-decoration: none;
+    font-family: "Manrope", sans-serif;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.admin-logo span,
+.admin-footer span {
+    color: #d9ff70;
+}
+
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.admin-header-right a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-label {
+    color: #d9ff70;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.logout-button {
+    border: 1px solid #ffffff55;
+    border-radius: 6px;
+    padding: 9px 15px;
+    color: white;
+    background: transparent;
+    cursor: pointer;
+}
+
+.admin-container {
+    min-height: 80vh;
+    padding: 50px 6% 80px;
+    background: #f8f7f4;
+}
+
+.admin-heading {
+    margin-bottom: 30px;
+}
+
+.admin-eyebrow {
+    color: #7655f6;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.admin-heading h1 {
+    color: #172554;
+    font-family: "Manrope", sans-serif;
+    font-size: 42px;
+    margin: 10px 0;
+}
+
+.admin-heading h1 span {
+    color: #7655f6;
+}
+
+.admin-heading > div > p:last-child {
+    color: #777;
+}
+
+.admin-message {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.admin-message.error {
+    color: #dc2626;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 50px;
+}
+
+.stat-card {
+    padding: 24px;
+    background: white;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stat-card span {
+    color: #777;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-card strong {
+    color: #172554;
+    font-family: "Manrope", sans-serif;
+    font-size: 28px;
+    overflow-wrap: anywhere;
+}
+
+.stat-card small {
+    color: #999;
+    font-size: 11px;
+}
+
+.admin-section {
+    margin-top: 45px;
+}
+
+.section-heading {
+    margin-bottom: 20px;
+}
+
+.section-heading h2 {
+    color: #172554;
+    font-family: "Manrope", sans-serif;
+    font-size: 27px;
+    margin: 8px 0;
+}
+
+.admin-panel {
+    padding: 27px;
+    margin-bottom: 22px;
+    background: white;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+}
+
+.admin-panel h3 {
+    color: #172554;
+    font-family: "Manrope", sans-serif;
+    margin: 0 0 22px;
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.admin-form-grid label {
+    display: block;
+    margin-bottom: 8px;
+    color: #444;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.admin-form-grid input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.admin-form-grid input:focus {
+    outline: none;
+    border-color: #7655f6;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.active-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 20px;
+    color: #444;
+    font-size: 13px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.primary-button,
+.secondary-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.primary-button {
+    background: #172554;
+    color: white;
+}
+
+.primary-button:hover {
+    background: #7655f6;
+}
+
+.secondary-button {
+    background: #eee;
+    color: #333;
+}
+
+.primary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.table-panel {
+    padding: 25px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+th,
+td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 12px;
+}
+
+th {
+    color: #777;
+    background: #fafafa;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    color: #444;
+}
+
+.product-name-cell {
+    color: #172554;
+    font-weight: 800;
+}
+
+.table-button {
+    padding: 7px 11px;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.edit-button {
+    color: #4f46e5;
+    background: #eeedff;
+}
+
+.delete-button {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+.status-select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.status-save-button {
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    background: #172554;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.status-save-button:hover {
+    background: #7655f6;
+}
+
+.admin-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    padding: 30px;
+    background: #172554;
+    color: white;
+    text-align: center;
+}
+
+.admin-footer a {
+    color: white;
+    text-decoration: none;
+    font-family: "Manrope", sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-footer p,
+.admin-footer small {
+    margin: 0;
+    color: #d1d5e0;
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .admin-header-right {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .admin-container {
+        padding: 35px 5%;
+    }
+
+    .admin-heading h1 {
+        font-size: 33px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-card strong {
+        font-size: 22px;
+    }
+
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .admin-panel {
+        padding: 18px;
+    }
+}

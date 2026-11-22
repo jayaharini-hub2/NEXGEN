@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your NEXGEN customer account.">
+
+    <title>Create Account | NEXGEN</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+<script type="module" src="../assets/js/account-menu.js"></script>
+</head>
+
+<body>
+
+    <header class="auth-header">
+        <a href="../index.html" class="auth-logo">NEXGEN<span>.</span></a>
+
+        <nav class="auth-nav" aria-label="Main navigation">
+           
+            <a href="../index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="cart.html">Cart</a>
+        </nav>
+    </header>
+
+    <main class="auth-page">
+
+        <section class="auth-card register-card" aria-labelledby="register-title">
+
+            <div class="auth-heading">
+                <p class="auth-eyebrow">JOIN NEXGEN</p>
+                <h1 id="register-title">Create account<span>.</span></h1>
+                <p>Join us and discover a better shopping experience.</p>
+            </div>
+
+            <form id="register-form">
+
+                <div class="auth-field">
+                    <label for="customer-name">Full name</label>
+                    <input
+                        type="text"
+                        id="customer-name"
+                        name="customerName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="At least 6 characters"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label for="confirm-password">Confirm password</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirmPassword"
+                        placeholder="Re-enter your password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <label class="password-toggle">
+                    <input type="checkbox" id="show-password">
+                    Show passwords
+                </label>
+
+                <p id="register-message" class="auth-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" id="register-button" class="auth-submit">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="auth-switch">
+                Already have an account?
+                <a href="login.html">Sign in</a>
+            </p>
+
+            <a href="shop.html" class="auth-back-link">← Continue shopping</a>
+
+        </section>
+
+    </main>
+
+    <footer class="auth-footer">
+        <a href="../index.html" class="footer-logo">NEXGEN<span>.</span></a>
+        <p>Discover more. Live better. Shop NEXGEN.</p>
+        <p class="footer-copyright">© 2026 NEXGEN. All rights reserved.</p>
+    </footer>
+
+
+    <script type="module">
+       import { mergeGuestCart } from "../assets/js/cart-service.js";
+        import { auth, db, doc, serverTimestamp } from "../assets/js/firebase-config.js";
+
+        import {
+            createUserWithEmailAndPassword,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+        import {
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+
+        const registerForm = document.getElementById("register-form");
+        const registerButton = document.getElementById("register-button");
+        const registerMessage = document.getElementById("register-message");
+
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirm-password");
+
+
+        // SHOW / HIDE PASSWORDS
+
+        document.getElementById("show-password").addEventListener("change", event => {
+
+            const type = event.target.checked ? "text" : "password";
+
+            passwordInput.type = type;
+            confirmPasswordInput.type = type;
+
+        });
+
+
+        // CUSTOMER REGISTRATION
+
+        registerForm.addEventListener("submit", async event => {
+
+            event.preventDefault();
+
+            registerMessage.textContent = "";
+            registerMessage.className = "auth-message";
+
+            const customerName =
+                document.getElementById("customer-name").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (customerName.length < 2) {
+
+                registerMessage.textContent =
+                    "Please enter a valid name.";
+
+                registerMessage.classList.add("error");
+                return;
+
+            }
+
+            if (password.length < 6) {
+
+                registerMessage.textContent =
+                    "Password must contain at least 6 characters.";
+
+                registerMessage.classList.add("error");
+                return;
+
+            }
+
+            if (password !== confirmPassword) {
+
+                registerMessage.textContent =
+                    "Passwords do not match.";
+
+                registerMessage.classList.add("error");
+                return;
+
+            }
+
+            registerButton.disabled = true;
+            registerButton.textContent = "Creating account...";
+
+            try {
+
+                // CREATE FIREBASE AUTH ACCOUNT
+
+                const userCredential = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+                  await mergeGuestCart(userCredential.user);
+                const user = userCredential.user;
+
+                // SAVE CUSTOMER DISPLAY NAME
+
+                await updateProfile(user, {
+                    displayName: customerName
+                });
+
+                // CREATE CUSTOMER FIRESTORE PROFILE
+
+                await setDoc(
+                    doc(db, "customers", user.uid),
+                    {
+                        uid: user.uid,
+                        customerName: customerName,
+                        email: email,
+                        role: "customer",
+                        isActive: true,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    }
+                );
+
+                // SIGN OUT AFTER REGISTRATION
+
+                await auth.signOut();
+
+                registerMessage.textContent =
+                    "Account created successfully! Redirecting to login...";
+
+                registerMessage.classList.add("success");
+
+                registerButton.textContent = "Account Created";
+
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1200);
+
+
+            } catch (error) {
+
+                console.error("Registration error:", error);
+
+                const errorMessages = {
+                    "auth/email-already-in-use": "This email is already registered. Please log in.",
+                    "auth/invalid-email": "Please enter a valid email address.",
+                    "auth/weak-password": "Please choose a stronger password.",
+                    "auth/network-request-failed": "Network error. Check your internet connection."
+                };
+
+                registerMessage.textContent =
+                    errorMessages[error.code] ||
+                    error.message ||
+                    "Unable to create your account. Please try again.";
+
+                registerMessage.classList.add("error");
+
+                registerButton.disabled = false;
+                registerButton.textContent = "Create Account";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
